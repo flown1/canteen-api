@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  id: 
+  role: 
+  name: 
+  email: 
+  token: 
+  transactionHistoryId: 
+
+two:
+  id: 
+  role: 
+  name: 
+  email: 
+  token: 
+  transactionHistoryId: 
