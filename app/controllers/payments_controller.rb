@@ -31,6 +31,7 @@ class PaymentsController < ApplicationController
             :openid_client_secret => "client_secret",
             :openid_redirect_uri  => "http://google.com"
         })
+        include PayPal::SDK::OpenIDConnect
         
         # Generate URL to Get Authorize code
         puts Tokeninfo.authorize_url( :scope => "openid profile" )
