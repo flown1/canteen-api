@@ -1,6 +1,5 @@
 class Dish
   include Mongoid::Document
-  field :_id, type: Integer
   field :namePL, type: String
   field :nameEN, type: String
   field :descPL, type: String
@@ -8,6 +7,7 @@ class Dish
   field :price, type: Float
   field :currency, type: String
   field :imgURL, type: String
+  field :isPromoted, type: Boolean
 
   belongs_to :menu
 end
