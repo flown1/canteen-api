@@ -3,5 +3,5 @@ Rails.application.routes.draw do
 
   root to: 'dishes#index'
   get '/payments/paypal', to: 'payments#paypal'
-
+  get '/test/hello', to: 'test#hello'
 end
