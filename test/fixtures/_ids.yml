@@ -6,7 +6,7 @@ one:
   descPL: MyString
   descEN: MyString
   price: MyString
-  imgURL: MyString
+  imgUrl: MyString
 
 two:
   namePL: MyString
@@ -14,4 +14,4 @@ two:
   descPL: MyString
   descEN: MyString
   price: MyString
-  imgURL: MyString
+  imgUrl: MyString

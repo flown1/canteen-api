@@ -6,5 +6,6 @@ Rails.application.routes.draw do
   get '/dishes', to: 'dishes#index'
   get '/users', to: 'users#index'
   get '/payments/paypal', to: 'payments#paypal'
+  
   get '/test/hello', to: 'test#hello'
 end

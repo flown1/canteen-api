@@ -7,7 +7,7 @@ one:
   descPL: 
   descEN: 
   price: 
-  imgURL: 
+  imgUrl: 
 
 two:
   _id: 
@@ -16,4 +16,4 @@ two:
   descPL: 
   descEN: 
   price: 
-  imgURL: 
+  imgUrl: 
