@@ -14,38 +14,30 @@ class DishesController < ApplicationController
 
   def create
     puts "CREATE" 
-    dish = Dish.where(namePL: params[:dish][:namePL]).first
-    if dish
-      puts "Dish already exists"
-      render json: {
-          status: :SUCCESS,
-          data: dish
-        }, status: :OK   
-    else
-      @dish = Dish.new(dish_params)
+    @dish = Dish.find_or_initialize_by(:namePL => params[:dish][:namePL])
+                .update_attributes!(:descPL => params[:dish][:descPL], 
+                                    :imgUrl => params[:dish][:imgUrl],
+                                    :price => params[:dish][:price],
+                                    :tags => params[:dish][:tags])
+    
+    render json: {
+      status: :SUCCESS,
+      data: {
+        dish: @dish
+      }
+    }, status: :OK    
 
-      if @dish.save!
-        puts "NEW DISH CREATED"
-        render json: {
-          status: :SUCCESS,
-          data: @dish
-        }, status: :OK    
-      else
-        # @dish.errors
-        puts "DISH not created"
-        dish.errors
-        render json: {
-            status: :internal_server_error,
-            data: @dish
-        }, status: :internal_server_error 
-      end
-    end
   end
 
   def edit
+    puts "EDITING..."
+   
   end
 
   def update
+    puts "UPDATING..."
+    @dish.update(dish_params)
+    head :no_content
   end
 
   def destroy

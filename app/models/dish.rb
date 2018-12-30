@@ -7,7 +7,7 @@ class Dish
   field :price, type: Float
   field :currency, type: String
   field :imgUrl, type: String
-  field :tags, type: Array
+  field :tags, type: Array, default: []
   field :isPromoted, type: Boolean
 
   # belongs_to :menu
