@@ -41,3 +41,6 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'mongoid'
 gem 'paypal-sdk-rest'
+gem "braintree", "~> 2.93.0"
+gem 'sass-rails', '~> 5.0'
+gem 'turbolinks'

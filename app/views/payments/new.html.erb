@@ -1,0 +1,65 @@
+<div class="wrapper">
+  <div class="checkout container">
+    <div class="content">
+
+      <header>
+        <p>
+          Make a test payment with Braintree using PayPal or a card
+        </p>
+      </header>
+
+      <%= form_tag("/payments", method: "post", id: "payment-form") do %>
+        <section>
+          <label for="amount">
+            <span class="input-label">Amount</span>
+            <div class="input-wrapper amount-wrapper">
+              <input id="amount" name="amount" type="tel" min="1" placeholder="Amount" value="10">
+            </div>
+          </label>
+
+          <div class="bt-drop-in-wrapper">
+            <div id="bt-dropin"></div>
+          </div>
+        </section>
+
+        <input type="hidden" id="nonce" name="payment_method_nonce" />
+        <button class="button" type="submit"><span>Test Transaction</span></button>
+      <% end %>
+
+    </div>
+  </div>
+</div>
+
+<button id="fake-payment-complete-button">Lets say payment is successuful</button>
+<script>
+    document.querySelector("#fake-payment-complete-button").onclick = function() {
+        console.log("Send post message");
+        window.postMessage("Hello React", "*");
+    }
+</script>
+
+<script src="https://js.braintreegateway.com/web/dropin/1.14.1/js/dropin.min.js"></script>
+<script>
+  var form = document.querySelector('#payment-form');
+  var client_token = "<%= @client_token %>";
+  braintree.dropin.create({
+    authorization: client_token,
+    container: '#bt-dropin',
+    paypal: {
+      flow: 'vault'
+    }
+  }, function (createErr, instance) {
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      instance.requestPaymentMethod(function (err, payload) {
+        if (err) {
+          console.log('Error', err);
+          return;
+        }
+        document.querySelector('#nonce').value = payload.nonce;
+        form.submit();
+      });
+    });
+  });
+</script>
+<%= javascript_include_tag 'application', 'data-turbolinks-suppress-warning' => true, 'data-turbolinks-track' => true %>

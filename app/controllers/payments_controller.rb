@@ -1,89 +1,75 @@
 class PaymentsController < ApplicationController
-    def paypal
-        puts "Paypal..."
-
-        # require "./config/initializers/stripe"
-        # @amount = 200
-        
-        # customer = Stripe::Customer.create(
-        #     :email => "test@test.com",
-        #     :source  => "tok_amex"
-        # )
-
-        # charge = Stripe::Charge.create(
-        #     :customer    => customer.id,
-        #     :amount      => @amount,
-        #     :description => 'Rails Stripe customer',
-        #     :currency    => 'usd'
-        # )
-
-        require 'paypal-sdk-rest'
-        
-        PayPal::SDK.configure(
-            :mode => "sandbox", # "sandbox" or "live"
-            :client_id => "AajDkIeamLrQkjCqsm1hP1DvWXJjdSzs5R5YZRHUJ-S8ppUdD-ImPtaZTVZbM8cKkvEtlHB6TA-TyEWJ",
-            :client_secret => "EGMUPJw3Fvy1pdbrmNUDRoWB8E4HkvRfZfBZdgiQfJp1Nmi5BvJ9ZVwL8y6u4FTL7wWdPWFhkLbpTmZx",
-            :ssl_options => { } )
-
-        # Update client_id, client_secret and redirect_uri
-        PayPal::SDK.configure({
-            :openid_client_id     => "client_id",
-            :openid_client_secret => "client_secret",
-            :openid_redirect_uri  => "http://google.com"
-        })
-        include PayPal::SDK::OpenIDConnect
-        
-        # Generate URL to Get Authorize code
-        puts Tokeninfo.authorize_url( :scope => "openid profile" )
-        
-        # Create tokeninfo by using AuthorizeCode from redirect_uri
-        tokeninfo = Tokeninfo.create("Replace with Authorize Code received on redirect_uri")
-        puts tokeninfo.to_hash
-        
-        # Refresh tokeninfo object
-        tokeninfo = tokeninfo.refresh
-        puts tokeninfo.to_hash
-        
-        # Create tokeninfo by using refresh token
-        tokeninfo = Tokeninfo.refresh("Replace with refresh_token")
-        puts tokeninfo.to_hash
-        
-        # Get Userinfo
-        userinfo = tokeninfo.userinfo
-        puts userinfo.to_hash
-        
-        # Get logout url
-        put tokeninfo.logout_url
-
-
-        # Build Payment object
-        @payment = Payment.new({
-            :intent =>  "sale",
-            :payer =>  {
-                :payment_method =>  "paypal" },
-            :redirect_urls => {
-                :return_url => "http://localhost:3000/payment/execute",
-                :cancel_url => "http://localhost:3000/" },
-            :transactions =>  [{
-                :item_list => {
-                :items => [{
-                    :name => "item",
-                    :sku => "item",
-                    :price => "5",
-                    :currency => "USD",
-                    :quantity => 1 }]},
-                :amount =>  {
-                    :total =>  "5",
-                    :currency =>  "USD" },
-                :description =>  "This is the payment transaction description." }]
-        })
-
-        if @payment.create
-            @payment.id     # Payment Id
-        else
-            @payment.error  # Error Hash
-        end
-
+    TRANSACTION_SUCCESS_STATUSES = [
+        Braintree::Transaction::Status::Authorizing,
+        Braintree::Transaction::Status::Authorized,
+        Braintree::Transaction::Status::Settled,
+        Braintree::Transaction::Status::SettlementConfirmed,
+        Braintree::Transaction::Status::SettlementPending,
+        Braintree::Transaction::Status::Settling,
+        Braintree::Transaction::Status::SubmittedForSettlement,
+    ]
+  
+    def new
+        puts "PAYMENTS NEW"
+        @client_token = gateway.client_token.generate
     end
 
+    def show
+        puts "PAYMENTS SHOW"
+        @transaction = gateway.transaction.find(params[:id])
+        @result = _create_result_hash(@transaction)
+    end
+
+    def create
+        puts "PAYMENTS CREATE"
+        amount = params["amount"] 
+        nonce = params["payment_method_nonce"]
+
+        result = gateway.transaction.sale(
+            amount: amount,
+            payment_method_nonce: nonce,
+            :options => {
+                :submit_for_settlement => true
+            }
+        )
+
+        if result.success? || result.transaction
+            puts "[SUCCESS] Payment completed"
+            redirect_to payments_path(result.transaction.id)
+        else
+            puts "[ERROR] Payment NOT completed"
+            error_messages = result.errors.map { |error| "Error: #{error.code}: #{error.message}" }
+            flash[:error] = error_messages
+            redirect_to new_payments_path
+        end
+    end
+
+    def _create_result_hash(transaction)
+        status = transaction.status
+
+        if TRANSACTION_SUCCESS_STATUSES.include? status
+            result_hash = {
+                :header => "Sweet Success!",
+                :icon => "success",
+                :message => "Your test transaction has been successfully processed. See the Braintree API response and try again."
+            }
+        else
+            result_hash = {
+                :header => "Transaction Failed",
+                :icon => "fail",
+                :message => "Your test transaction has a status of #{status}. See the Braintree API response and try again."
+            }
+        end
+    end
+
+    def gateway
+        env = ENV["BT_ENVIRONMENT"]
+
+        @gateway ||= Braintree::Gateway.new(
+            :environment => :sandbox,
+            :merchant_id => "hsst2kkt55f4s9cz",
+            :public_key => "ztqjzs2wmjm344mq",
+            :private_key => "76c6309f7aa452b19137cfd8fb4e36ae",
+        )
+    end
 end
