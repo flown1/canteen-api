@@ -1,8 +1,8 @@
 class DishOrder
   include Mongoid::Document
-  field :id, type: Integer
+  field :dish, type: Dish
   field :quantity, type: Integer
 
-  belongs_to :transaction
-  has_one :dish
+  # belongs_to :transaction
+  # has_one :dish
 end
