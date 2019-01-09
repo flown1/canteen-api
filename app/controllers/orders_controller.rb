@@ -8,7 +8,7 @@ class OrdersController < ApplicationController
             data: @result
         }, status: :OK
     end
-
+    
     def new
         puts "NEW"
         puts order_info_params
@@ -56,10 +56,54 @@ class OrdersController < ApplicationController
     def destroy
     end
 
+    def setReady
+        puts "SETTING ORDER as READY..."
+
+        @id = params[:orderId]
+        @result = OrderInfo.find(@id)
+
+        if @result 
+            puts "FOUND RECORD"
+            @result.update_attributes(:status => "READY")
+            render json: {
+                status: :OK,
+                data: {}
+            }, status: :OK
+        else
+            puts "HAVE NOT FOUND RECORD"
+            render json: {
+                status: :ERROR,
+                data: {}
+            }, status: :ERROR
+        end
+    end
+
+    def setComplete
+        puts "SETTING ORDER as COMPLETE..."
+
+        @id = params[:orderId]
+        @result = OrderInfo.find(@id)
+
+        if @result 
+            puts "FOUND RECORD"
+            @result.update_attributes(:status => "COMPLETE")
+            render json: {
+                status: :OK,
+                data: {}
+            }, status: :OK
+        else
+            puts "HAVE NOT FOUND RECORD"
+            render json: {
+                status: :ERROR,
+                data: {}
+            }, status: :ERROR
+        end
+    end
+
     private
     def order_info_params
         params.permit({:items => [
                                 {:dish => {}}, :quantity
-        ]}, :price, :ownerEmail, :ownerName, :status, :code, {:order => {}})
+        ]}, :price, :ownerEmail, :ownerName, :status, :code, {:order => {}}) #:orderId jeszcze?
     end
 end
