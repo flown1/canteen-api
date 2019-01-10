@@ -8,6 +8,10 @@ Rails.application.routes.draw do
   get '/dishes', to: 'dishes#index'
   get '/users', to: 'users#index'
   get '/orders', to: 'orders#index'
+  get '/orders/archive', to: 'orders#getOrdersArchive'
+  get '/orders/incomplete', to: 'orders#getIncomplete'
+  get '/orders/user', to: 'orders#getUserOrders'
+  get '/orders/userArchive', to: 'orders#getUserOrdersArchive'
   post '/orders/ready', to: 'orders#setReady'
   post '/orders/complete', to: 'orders#setComplete'
   get '/payments', to: "payments#new"
