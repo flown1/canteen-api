@@ -5,6 +5,7 @@ class User
   field :imgUrl, type: String
   field :email, type: String
   field :token, type: String
+  field :exponentPushToken, type: String
   # field :transactionId, type: Integer
 
   # has_many :transaction

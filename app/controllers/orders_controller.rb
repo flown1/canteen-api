@@ -146,6 +146,20 @@ class OrdersController < ApplicationController
         if @result 
             puts "FOUND RECORD"
             @result.update_attributes(:status => "READY")
+
+            client = Exponent::Push::Client.new
+            # client = Exponent::Push::Client.new(gzip: true)  # for compressed, faster requests
+            
+
+            messages = [{
+                to: "ExponentPushToken[DWNhlpELIRqcxBiRya_Ucz]",
+                sound: "default",
+                title: "🥗 Twoje zamówienie jest gotowe! 🥗",
+                body: "Przejdź do aplikacji i użyj kodu, aby odebrać zamówienie"
+            }]
+            
+            client.publish messages
+
             render json: {
                 status: :OK,
                 data: {}
