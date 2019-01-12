@@ -32,15 +32,16 @@ class PaymentsController < ApplicationController
                 :submit_for_settlement => true
             }
         )
+        
+        puts result.inspect
 
         if result.success? || result.transaction
             puts "[SUCCESS] Payment completed"
-            redirect_to payments_path(result.transaction.id)
+            #redirect_to payments_path(result.transaction.id)
         else
             puts "[ERROR] Payment NOT completed"
             error_messages = result.errors.map { |error| "Error: #{error.code}: #{error.message}" }
-            flash[:error] = error_messages
-            redirect_to new_payments_path
+            #redirect_to 
         end
     end
 
@@ -71,5 +72,10 @@ class PaymentsController < ApplicationController
             :public_key => "ztqjzs2wmjm344mq",
             :private_key => "76c6309f7aa452b19137cfd8fb4e36ae",
         )
+    end
+
+    private
+    def payments_params
+        params.permit(:price, :orderId, :amount, :payment_method_nonce) #:orderId jeszcze?
     end
 end

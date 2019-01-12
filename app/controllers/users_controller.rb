@@ -12,19 +12,6 @@ class UsersController < ApplicationController
   def new
     puts "NEW"
     @user = User.new(user_params)
-    # if @user = User.where(email: params[:user][:email]).first_or_create
-    #   puts "User already exists! Just sending back token"   
-    #   render json: {
-    #         status: :SUCCESS,
-    #         data: @user
-    #   }, status: :OK  
-    # else
-    #   @user = User.new
-    #   render json: {
-    #         status: :SUCCESS,
-    #         data: @user
-    #   }, status: :OK  
-    # end
   end
 
   def create
@@ -48,8 +35,8 @@ class UsersController < ApplicationController
       else
         puts "USER not created"
         render json: {
-            status: :internal_server_error,
-            data: @user
+          status: :internal_server_error,
+          data: @user
         }, status: :internal_server_error 
       end
     end
@@ -62,6 +49,30 @@ class UsersController < ApplicationController
   end
 
   def destroy
+  end
+
+  def updateExponentPushToken
+    @user = User.find_by(email: params[:email]);
+    puts @user
+    puts params[:exponentPushToken]
+
+    if @user 
+      puts "FOUND USER TO UPDATE TOKEN"
+      @user.update(exponentPushToken: params[:exponentPushToken])
+      puts "USER AFTER UPDATE:"
+      puts @user.inspect
+      
+      render json: {
+        status: :OK,
+        data: {}
+      }, status: :OK
+    else
+      puts "HAVEN'T FOUND USER TO UPDATE TOKEN"
+      render json: {
+        status: :ERROR,
+        data: {}
+      }, status: :ERROR
+    end
   end
 
   private

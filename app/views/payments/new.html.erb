@@ -13,7 +13,7 @@
           <label for="amount">
             <span class="input-label">Amount</span>
             <div class="input-wrapper amount-wrapper">
-              <input id="amount" name="amount" type="tel" min="1" placeholder="Amount" value="10">
+              <input id="amount" name="amount" type="tel" min="1" placeholder="Amount" readonly="readonly">
             </div>
           </label>
 
@@ -29,12 +29,16 @@
     </div>
   </div>
 </div>
-
+<div class="someClassName"></div>
 <button id="fake-payment-complete-button">Lets say payment is successuful</button>
 <script>
     document.querySelector("#fake-payment-complete-button").onclick = function() {
-        console.log("Send post message");
-        window.postMessage("Hello React", "*");
+        const message = JSON.stringify({
+          prefix: MESSAGE_PREFIX,
+          payload: {val: "Some info"}
+        });
+        alert("message");
+        window.postMessage(message, "*");
     }
 </script>
 

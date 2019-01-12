@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   root 'dishes#index'
   get '/dishes', to: 'dishes#index'
   get '/users', to: 'users#index'
+  post '/users/updateExponentPushToken', to: 'users#updateExponentPushToken'
   get '/orders', to: 'orders#index'
   get '/orders/archive', to: 'orders#getOrdersArchive'
   get '/orders/incomplete', to: 'orders#getIncomplete'

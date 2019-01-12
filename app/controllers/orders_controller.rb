@@ -96,8 +96,8 @@ class OrdersController < ApplicationController
 
     def getUserOrdersArchive
         puts "GETTING USER's ORDERS ARCHIVE..."
-        @email = params[:ownerEmail]
-        @result = OrderInfo.where(:ownerEmail => @email)
+
+        @result = OrderInfo.find(:ownerEmail => @email)
                             .where(:status => "COMPLETE")
 
         if @result
@@ -118,7 +118,6 @@ class OrdersController < ApplicationController
 
     def getOrdersArchive
         puts "GETTING ORDERS ARCHIVE..."
-        @email = params[:ownerEmail]
         @result = OrderInfo.where(:status => "COMPLETE")
 
         if @result
@@ -142,24 +141,30 @@ class OrdersController < ApplicationController
 
         @id = params[:orderId]
         @result = OrderInfo.find(@id)
+        @email = @result.ownerEmail
+        puts @email
 
         if @result 
             puts "FOUND RECORD"
             @result.update_attributes(:status => "READY")
 
+            @user = User.find_by(email: @email)
+            puts "User:"
+            puts @user.inspect
+            token = @user.exponentPushToken#"ExponentPushToken[DWNhlpELIRqcxBiRya_Ucz]"
+            puts "Token:"
+            puts token
             client = Exponent::Push::Client.new
-            # client = Exponent::Push::Client.new(gzip: true)  # for compressed, faster requests
-            
 
             messages = [{
-                to: "ExponentPushToken[DWNhlpELIRqcxBiRya_Ucz]",
+                to: token,
                 sound: "default",
                 title: "🥗 Twoje zamówienie jest gotowe! 🥗",
                 body: "Przejdź do aplikacji i użyj kodu, aby odebrać zamówienie"
             }]
             
             client.publish messages
-
+            
             render json: {
                 status: :OK,
                 data: {}
