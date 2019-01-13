@@ -11,7 +11,7 @@
       <%= form_tag("/payments", method: "post", id: "payment-form") do %>
         <section>
           <label for="amount">
-            <span class="input-label">Amount</span>
+            <span class="input-label">Całkowity koszt:</span>
             <div class="input-wrapper amount-wrapper">
               <input id="amount" name="amount" type="tel" min="1" placeholder="Amount" readonly="readonly">
             </div>
@@ -23,23 +23,19 @@
         </section>
 
         <input type="hidden" id="nonce" name="payment_method_nonce" />
-        <button class="button" type="submit"><span>Test Transaction</span></button>
+        <button class="button" type="submit"><span>Zapłać</span></button>
       <% end %>
 
     </div>
   </div>
 </div>
 <div class="someClassName"></div>
-<button id="fake-payment-complete-button">Lets say payment is successuful</button>
+<button id="fake-payment-complete-button">Anuluj płatność</button>
 <script>
-    document.querySelector("#fake-payment-complete-button").onclick = function() {
-        const message = JSON.stringify({
-          prefix: MESSAGE_PREFIX,
-          payload: {val: "Some info"}
-        });
-        alert("message");
-        window.postMessage(message, "*");
-    }
+    document.getElementById("fake-payment-complete-button").addEventListener('click', () => {
+      alert("Exiting!");
+      window.postMessage("Post message from web");
+    })
 </script>
 
 <script src="https://js.braintreegateway.com/web/dropin/1.14.1/js/dropin.min.js"></script>

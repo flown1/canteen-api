@@ -96,8 +96,8 @@ class OrdersController < ApplicationController
 
     def getUserOrdersArchive
         puts "GETTING USER's ORDERS ARCHIVE..."
-
-        @result = OrderInfo.find(:ownerEmail => @email)
+        @email = params[:ownerEmail]
+        @result = OrderInfo.where(:ownerEmail => @email)
                             .where(:status => "COMPLETE")
 
         if @result
