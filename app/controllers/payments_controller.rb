@@ -37,11 +37,11 @@ class PaymentsController < ApplicationController
 
         if result.success? || result.transaction
             puts "[SUCCESS] Payment completed"
-            redirect_to "http://192.168.69.105:3000/success"
+            redirect_to "http://192.168.69.100:3000/success"
         else
             puts "[ERROR] Payment NOT completed"
             error_messages = result.errors.map { |error| "Error: #{error.code}: #{error.message}" }
-            redirect_to "http://192.168.69.105:3000/error"
+            redirect_to "http://192.168.69.100:3000/error"
         end
     end
 

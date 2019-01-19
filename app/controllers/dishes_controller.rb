@@ -41,8 +41,28 @@ class DishesController < ApplicationController
   end
 
   def destroy
+    puts "DESTROYING"
   end
 
+  def delete
+    puts "DELETING"
+    @result = Dish.where(namePL: params[:namePL]).destroy
+
+    if @result 
+      render json: {
+        status: :SUCCESS,
+        data: {
+        }
+      }, status: :OK 
+    else
+      render json: {
+        status: :ERROR,
+        data: {
+        }
+      }, status: :ERROR
+    end
+  end
+  
   private
   def dish_params
     params.permit(:namePL, :nameEN, :descPL, :descEN, 

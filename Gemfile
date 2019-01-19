@@ -45,3 +45,5 @@ gem "braintree", "~> 2.93.0"
 gem 'sass-rails', '~> 5.0'
 gem 'turbolinks'
 gem 'exponent-server-sdk'
+
+gem 'nokogiri', '~> 1.6', '>= 1.6.8'
